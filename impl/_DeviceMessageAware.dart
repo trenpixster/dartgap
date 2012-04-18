@@ -22,18 +22,16 @@ class _DeviceMessageAware {
     print("got message [${jsonMsg['type']}] target [${jsonMsg['target']}]");
     if(jsonMsg["target"] == "Dart") {
       var message = new _DeviceMessage.json(jsonMsg);
-      var handler = _messageHandlers[message.area];
-      if(handler !== null) {
-        // atempt to restore original callback function
+      if(message.type == "callback") {
+        // message callback
         var callbackId = message.callback;
-        if(callbackId !== null && _callbacks.containsKey(callbackId)) {
-          message.callback = _callbacks[callbackId];
-          _callbacks.remove(callbackId);
-        }
-        // dispatch message
-        handler(message);
+        print("handling callback $callbackId");
+        _callbacks[callbackId](message);
+        _callbacks.remove(callbackId);
       } else {
-        throw "unhandled message area ${message.area}";
+        // let area specific message handles do the processing
+        var handler = _messageHandlers[message.area];
+        handler(message);
       }
     }
   }
@@ -53,4 +51,3 @@ class _DeviceMessageAware {
   _DeviceMessage createMessage(String type) => new _DeviceMessage(area, type);
 }
 
-typedef _DeviceMessageHandler(_DeviceMessage message);

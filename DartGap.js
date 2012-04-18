@@ -18,7 +18,12 @@ DartGap.Application = function(messageHandler, messageBuilder) {
     if(msg.target == "Cordova") {
       var handler = messageHandler[msg.area];
       if(handler !== undefined) {
-        handler(msg);
+        var callback = function() {
+          if(msg.callback !== undefined) {
+          	sendMessage(messageBuilder.callback(msg)); 
+          }
+        }
+        handler(msg, callback);
       }
     }
   } 
@@ -34,10 +39,10 @@ DartGap.Application = function(messageHandler, messageBuilder) {
 
 // Message handler for incoming messages from Dart
 DartGap.MessageHandler = {
-  "notification": function(msg) {
+  "notification": function(msg, callback) {
       switch (msg.type) {
         case "alert":
-          navigator.notification.alert(msg.content.alert);
+          navigator.notification.alert(msg.content.alert, callback);
           break;
       }
   }
@@ -52,6 +57,14 @@ DartGap.MessageBuilder = {
         "type": "ready"
       };
     }
+  },
+  "callback": function(msg) {
+    return {
+	  "area": msg.area + "." + msg.type,
+	  "callback": msg.callback,
+	  "content": msg.content,
+	  "type": "callback"
+	};
   }
 };
 

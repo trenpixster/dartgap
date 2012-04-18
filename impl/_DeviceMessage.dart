@@ -13,25 +13,31 @@ class _DeviceMessage {
   Map content;
   
   factory _DeviceMessage.json(var json) {
-    return new _DeviceMessage(json["area"], json["type"], json["content"]);
+    return new _DeviceMessage(json["area"], json["type"], json["content"], json["callback"]);
   }
   
-  _DeviceMessage(this.area, this.type, [this.content = null]) {
+  _DeviceMessage(this.area, this.type, [this.content = null, this.callback = null]) {
     if(content === null) {
       content = {};
     }
   }
   
   String get asJsonString() {
+    // required keys
     var msg = {
       "area": area,
-      "callback": callback,
       "content": content,
       "type": type,
       "target": "Cordova"
     };
+    // optional keys
+    if(callback !== null) {
+      msg["callback"] = callback;
+    }
     return JSON.stringify(msg);
   }
 }
+
+typedef _DeviceMessageHandler(_DeviceMessage message);
 
 

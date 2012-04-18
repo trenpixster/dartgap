@@ -10,5 +10,5 @@ interface DeviceNotification {
   /**
    * Shows a custom alert or dialog box.
    */
-  alert(String alertMessage);
+  Future<Map> alert(String alertMessage, [var callback]);
 }
