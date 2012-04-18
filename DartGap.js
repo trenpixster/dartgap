@@ -9,20 +9,23 @@ DartGap.Application = function(messageHandler, messageBuilder) {
   var self = {};
   
   self.go = function() {
-    window.addEventListener("message", receiveMessage, false);
+    window.addEventListener("message", messageDispatcher, false);
     sendMessage(messageBuilder.device.ready());
   };
   
-  function receiveMessage(event) {
+  function messageDispatcher(event) {
     var msg = JSON.parse(event.data);
-    var handler = messageHandler[msg.area];
-    if(handler !== undefined) {
-      handler(msg);
+    if(msg.target == "Cordova") {
+      var handler = messageHandler[msg.area];
+      if(handler !== undefined) {
+        handler(msg);
+      }
     }
   } 
   
   function sendMessage(msg) {
-    window.postMessage(JSON.stringify(msg), '*');
+    msg.target = "Dart";
+    window.postMessage(JSON.stringify(msg), "*");
   }
   
   return self;

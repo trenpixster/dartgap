@@ -26,15 +26,16 @@ class Device implements DeviceMessageAware {
   }
   
   _messageDispatcher(MessageEvent event) {
-    print("EVENT ${event.origin}");
-    
-    var msg = new DeviceMessage.json(event.data);
-    switch(msg.area) {
-      case "device":
-        receiveMessage(msg);
-        break;
-      default:
-        throw "unhandled message area ${msg.area}";
+    var jsonMsg = JSON.parse(event.data);
+    if(jsonMsg["target"] == "Dart") {
+      var msg = new DeviceMessage.json(jsonMsg);
+      switch(msg.area) {
+        case "device":
+          receiveMessage(msg);
+          break;
+        default:
+          throw "unhandled message area ${msg.area}";
+      }
     }
   }
    

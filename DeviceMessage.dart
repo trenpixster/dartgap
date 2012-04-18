@@ -11,8 +11,7 @@ class DeviceMessage {
   final String type;
   Map content;
   
-  factory DeviceMessage.json(Object data) {
-    var json = JSON.parse(data);
+  factory DeviceMessage.json(var json) {
     return new DeviceMessage(json["area"], json["type"], json["content"]);
   }
   
