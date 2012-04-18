@@ -24,4 +24,4 @@ TODO
 * Implement more of the Cordova API http://docs.phonegap.com/en/edge/index.html
 * publish API documentation on GitHub
 
-[ios][http://wiki.phonegap.com/w/page/52010495/Getting%20Started%20with%20PhoneGap-Cordova%20and%20Xcode%204]
+[ios]: http://wiki.phonegap.com/w/page/52010495/Getting%20Started%20with%20PhoneGap-Cordova%20and%20Xcode%204
