@@ -6,36 +6,32 @@
 /**
  * Messages send and recived from Cordova to Dart
  */
-class DeviceMessage {
+class _DeviceMessage {
   final String area;
   final String type;
+  var callback;
   Map content;
   
-  factory DeviceMessage.json(var json) {
-    return new DeviceMessage(json["area"], json["type"], json["content"]);
+  factory _DeviceMessage.json(var json) {
+    return new _DeviceMessage(json["area"], json["type"], json["content"]);
   }
   
-  DeviceMessage(this.area, this.type, [this.content = null]) {
+  _DeviceMessage(this.area, this.type, [this.content = null]) {
     if(content === null) {
       content = {};
     }
   }
   
-  // TODO overload [] to extract content
-  
   String get asJsonString() {
     var msg = {
       "area": area,
+      "callback": callback,
+      "content": content,
       "type": type,
-      "content": content
+      "target": "Cordova"
     };
     return JSON.stringify(msg);
   }
 }
 
-/**
- * Implemented by all classes that can handle incoming Cordova messages
- */
-interface DeviceMessageAware {
-  receiveMessage(DeviceMessage message);
-}
+

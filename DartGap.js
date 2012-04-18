@@ -25,13 +25,14 @@ DartGap.Application = function(messageHandler, messageBuilder) {
   
   function sendMessage(msg) {
     msg.target = "Dart";
+    console.log("sending message [" + msg.type + "]");
     window.postMessage(JSON.stringify(msg), "*");
   }
   
   return self;
 };
 
-// Message handler for incoming messages (dart -> cordova)
+// Message handler for incoming messages from Dart
 DartGap.MessageHandler = {
   "notification": function(msg) {
       switch (msg.type) {
@@ -42,7 +43,7 @@ DartGap.MessageHandler = {
   }
 };
 
-// Message builder for outgoing messages (cordova -> dart)
+// Message builder for outgoing messages to Dart
 DartGap.MessageBuilder = {
   "device": {
     "ready": function() {

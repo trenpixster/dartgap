@@ -3,51 +3,19 @@
 // This open source software is governed by the license terms 
 // specified in the LICENSE file
 
-class Device implements DeviceMessageAware {
-  static Device _instance;
+/**
+ * The device object describes the device's hardware and software.
+ */
+interface Device {
+  /**
+   * Fired when cordova is ready to interact with Dart
+   */
+  set onDeviceReady(void callback());
   
-  // delegates
-  final DeviceNotification notification;
-  
-  // handlers
-  var _onDeviceReady;
-  
-  factory Device() {
-    if(_instance === null) {
-      _instance = new Device._internal();
-    }
-    return _instance;
-  }
-  
-  Device._internal()
-    : notification = new DeviceNotification() 
-  {
-    window.on.message.add(_messageDispatcher, false); 
-  }
-  
-  _messageDispatcher(MessageEvent event) {
-    var jsonMsg = JSON.parse(event.data);
-    if(jsonMsg["target"] == "Dart") {
-      var msg = new DeviceMessage.json(jsonMsg);
-      switch(msg.area) {
-        case "device":
-          receiveMessage(msg);
-          break;
-        default:
-          throw "unhandled message area ${msg.area}";
-      }
-    }
-  }
-   
-  receiveMessage(DeviceMessage message) {
-    switch(message.type) {
-      case "ready":
-        _onDeviceReady();
-        break;
-      default:
-        throw "unhandled message type ${message.type}";
-    }
-  }
-  
-  set onDeviceReady(void callback()) => _onDeviceReady = callback;
+  /**
+   * Handler for visual, audible, and tactile device notifications.
+   */
+  DeviceNotification get notification();
 }
+
+
