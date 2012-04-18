@@ -10,7 +10,7 @@ the idea is to implement all of it. So if you find something missing then grab t
 Getting started on iOS
 ----------------------
 
-1. Install the latest Cordova and create a sample application by following [ios][this guide]
+1. Install the latest Cordova and create a sample application by following [this guide][ios]
 1. Copy the **test/iOS/index.html** file from **DartGap** into your projects **www** folder.
 1. Compile **test/CordovaApp.dart** with **frogc** and copy **CordovaApp.dart.js** to the projects **www** folder
 1. Copy **DartGap.js** to your projects **www** folder.
