@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Cordova application</title>  
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
+    <meta charset="utf-8">
+        
+    <script type="text/javascript" charset="utf-8" src="cordova-1.6.0.js"></script>
+    <script type="text/javascript" src="DartGap.js"></script>    
+    <script type="text/javascript" src="CordovaApp.dart.js"></script>
+
+    <script type="text/javascript">
+      function onBodyLoad() {		
+        document.addEventListener("deviceready", onDeviceReady, false);
+      }
+      
+      function onDeviceReady() {
+        DartGap.init();
+      }
+    </script>
+  </head>
+  <body onload="onBodyLoad()">
+    <h1>Hey, it's Cordova!</h1>
+  </body>
+</html>
