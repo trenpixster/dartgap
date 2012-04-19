@@ -25,8 +25,11 @@ class _DeviceMessageAware {
       if(message.type == "callback") {
         // message callback
         var callbackId = message.callback;
-        print("handling callback $callbackId");
-        _callbacks[callbackId](message);
+        var callback = _callbacks[callbackId];
+        Expect.isNotNull(callback);
+        
+        print("handling callback $callbackId for ${message.area}");
+        callback(message);
         _callbacks.remove(callbackId);
       } else {
         // let area specific message handles do the processing

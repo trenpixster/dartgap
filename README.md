@@ -19,6 +19,12 @@ Getting started on iOS
 If you change the Dart code in the application remember to recompile and copy it to the **www** folder again. 
 Then restart the iOS simulator.
 
+API
+---
+
+* Device
+* Notification
+
 TODO
 ----
 * Implement more of the Cordova API http://docs.phonegap.com/en/edge/index.html

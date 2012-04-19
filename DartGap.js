@@ -14,13 +14,18 @@ DartGap.Application = function(messageHandler, messageBuilder) {
   };
   
   function messageDispatcher(event) {
-    var msg = JSON.parse(event.data);
-    if(msg.target == "Cordova") {
-      var handler = messageHandler[msg.area];
+    var callback, 
+        handler, 
+        msg = JSON.parse(event.data);
+        
+    if(msg.target === "Cordova") {
+      handler = messageHandler[msg.area];
       if(handler !== undefined) {
-        var callback = function() {
-          if(msg.callback !== undefined) {
-          	sendMessage(messageBuilder.callback(msg)); 
+        if(msg.callback !== undefined) {
+          callback = function(result) {
+            console.log("callback result from " + msg.type);
+            console.log(result);
+         	sendMessage(messageBuilder.callback(msg, result)); 
           }
         }
         handler(msg, callback);
@@ -40,11 +45,26 @@ DartGap.Application = function(messageHandler, messageBuilder) {
 // Message handler for incoming messages from Dart
 DartGap.MessageHandler = {
   "notification": function(msg, callback) {
-      switch (msg.type) {
-        case "alert":
-          navigator.notification.alert(msg.content.alert, callback);
-          break;
-      }
+	switch(msg.type) {
+	  case "alert":
+	    navigator.notification.alert(msg.content.alert, callback);
+	    break;
+	}
+  },
+  "device": function(msg, callback) {
+    var result;
+    switch(msg.type) {
+	  case "info": 
+	    result = {
+          "name": device.name,    
+    	  "cordova": device.cordova,
+    	  "platform": device.platform, 
+    	  "uuid": device.uuid,    
+    	  "version": device.version 
+        };
+        callback(result);
+        break;
+    }
   }
 };
 
@@ -56,15 +76,19 @@ DartGap.MessageBuilder = {
         "area": "device",
         "type": "ready"
       };
-    }
+    },
+  
   },
-  "callback": function(msg) {
-    return {
+  "callback": function(msg, result) {
+     var msg = {
 	  "area": msg.area + "." + msg.type,
 	  "callback": msg.callback,
-	  "content": msg.content,
 	  "type": "callback"
-	};
+	 };
+	 if(result !== undefined) {
+	   msg.content = result;
+	 }
+	 return msg; 
   }
 };
 

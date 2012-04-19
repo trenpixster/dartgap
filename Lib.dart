@@ -9,11 +9,13 @@
 #import("dart:json");
 
 #source("impl/_DeviceImpl.dart");
+#source("impl/_DeviceInfoImpl.dart");
 #source("impl/_DeviceMessage.dart");
 #source("impl/_DeviceMessageAware.dart");
 #source("impl/_DeviceNotificationImpl.dart");
 
 #source("Device.dart");
+#source("DeviceInfo.dart");
 #source("DeviceNotification.dart");
 
 Device get device() => new _DeviceImpl();

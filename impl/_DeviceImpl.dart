@@ -12,6 +12,19 @@ class _DeviceImpl extends _DeviceMessageAware implements Device {
   // handlers
   var _onDeviceReady;
   
+  Future<DeviceInfo> get info() {
+    var completer = new Completer<DeviceInfo>();
+    
+    var message = createMessage("info");
+    message.callback = (_DeviceMessage msg) {
+      var info = new _DeviceInfoImpl(msg.content);
+      completer.complete(info);
+    };
+    sendMessage(message);
+    
+    return completer.future;
+  }
+  
   factory _DeviceImpl() {
     if(_instance === null) {
       _instance = new _DeviceImpl._internal();

@@ -16,6 +16,11 @@ interface Device {
    * Handler for visual, audible, and tactile device notifications.
    */
   DeviceNotification get notification();
+  
+  /**
+   * Retrieve device information such as platform and version
+   */
+  Future<DeviceInfo> get info();
 }
 
 
