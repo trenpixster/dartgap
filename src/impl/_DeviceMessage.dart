@@ -9,17 +9,20 @@
 class _DeviceMessage {
   final String area;
   final String type;
-  var callback;
   Map content;
+  var callback, error;
   
   factory _DeviceMessage.json(var json) {
-    return new _DeviceMessage(json["area"], json["type"], json["content"], json["callback"]);
+    var message = new _DeviceMessage(json["area"], json["type"]);
+    message.content = json["content"];
+    message.callback = json["callback"];
+    message.error = json["error"];
+    
+    return message;
   }
   
-  _DeviceMessage(this.area, this.type, [this.content = null, this.callback = null]) {
-    if(content === null) {
-      content = {};
-    }
+  _DeviceMessage(this.area, this.type) {
+    content = {};
   }
   
   String get asJsonString() {
@@ -34,10 +37,13 @@ class _DeviceMessage {
     if(callback !== null) {
       msg["callback"] = callback;
     }
-    return JSON.stringify(msg);
+    var string = JSON.stringify(msg);
+    print("json is $string");
+    return string;
   }
+  
+  bool get hasErrors() => error === null;
 }
 
-typedef _DeviceMessageHandler(_DeviceMessage message);
 
 

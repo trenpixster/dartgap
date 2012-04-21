@@ -8,11 +8,6 @@
  */
 interface Device {
   /**
-   * Fired when cordova is ready to interact with Dart
-   */
-  set onDeviceReady(void callback());
-  
-  /**
    * Handler for visual, audible, and tactile device notifications.
    */
   DeviceNotification get notification();
@@ -21,6 +16,13 @@ interface Device {
    * Retrieve device information such as platform and version
    */
   Future<DeviceInfo> get info();
+  
+  /**
+   * Returns a Database object for [name] and [version]. Where [displayname] 
+   * is a user friendly name required by the user agent and [size] is the 
+   * esitmated number of bytes required for the database.
+   */
+  Future<DeviceDatabase> openDatabase(String name, String version, String displayname, int size);
 }
 
 

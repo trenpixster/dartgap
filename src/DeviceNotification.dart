@@ -8,7 +8,9 @@
  */
 interface DeviceNotification {
   /**
-   * Shows a custom alert or dialog box.
+   * Shows a custom alert or dialog box. 
+   *
+   * Note the future returns when the user closes the box
    */
-  Future<Map> alert(String alertMessage, [var callback]);
+  Future<Map> alert(String alertMessage);
 }
