@@ -54,7 +54,9 @@ Cordova API status
 * Geolocation
 * Media
 * Notification: Work started
-* Storage: Work started
+* Storage: 
+  * WebSQL: Fully implemented
+  * LocalStorage: Work started 
 
 
 TODO

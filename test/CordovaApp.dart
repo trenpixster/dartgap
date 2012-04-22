@@ -27,8 +27,6 @@ main() {
       batchCallback.handleException((Exception e) => print("error is $e"));
     });
     
-    if(true) return;
-    
     // device API
     device.info.then((DeviceInfo deviceInfo) {
       _addHtml("<h2>Dart got Device Info!</h2>");
