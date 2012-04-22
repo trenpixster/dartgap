@@ -4,11 +4,18 @@
 // specified in the LICENSE file
 
 class _SQLBatchResultImpl implements SQLBatchResult {
-  Map _data;
+  List<SQLResult> results;
   
   _SQLBatchResultImpl(_DeviceMessage message) {
-    _data = message.content;
+    results = [];
+    message.content.forEach((Map data) {
+      results.add(new _SQLResultImpl(data["query"], data["result"]));
+    });
   }
   
-  String toString() => _data.toString();
+  SQLResult operator[](int index) => results[index];
+  
+  forEach(f(SQLResult result)) => results.forEach(f);
+  
+  String toString() => results.toString();
 }

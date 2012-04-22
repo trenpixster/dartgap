@@ -20,6 +20,7 @@ class _Guid implements Hashable {
   _Guid.fromValue(this.value);
 
   operator ==(_Guid other) {
+    if(other === null) return false;
     return value == other.value;
   }
   

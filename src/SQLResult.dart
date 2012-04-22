@@ -10,16 +10,21 @@ interface SQLResult {
   /**
    * The query executed
    */
-  String query;
+  String get query();
   
   /**
    * The result set of the query
    */
-  List<Dynamic> asList;
+  List<Map> get result();
   
   /**
-   * Convert the result into an object by passing in a [resultMapper]
+   * Convinece function to get entry in SQL result
    */
-  Dynamic asObject(Dynamic resultMapper(List<Dynamic> list));
+  Map operator[](int index);
+  
+  /**
+   * Convinece function to loop over each entry in the SQL result
+   */
+  forEach(f(Map data));
 }
 

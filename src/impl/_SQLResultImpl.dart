@@ -4,11 +4,14 @@
 // specified in the LICENSE file
 
 class _SQLResultImpl implements SQLResult {
-  Map _data;
+  final String query;
+  final List<Map> result;
   
-  _SQLResultImpl(_DeviceMessage message) {
-    _data = message.content;
-  }
+  _SQLResultImpl(this.query, this.result);
   
-  String toString() => _data.toString();
+  Map operator[](int index) => result[index];
+  
+  forEach(f(Map data)) => result.forEach(f);
+  
+  String toString() => "query: [$query] result [${result.toString()}]";
 }

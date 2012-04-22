@@ -6,29 +6,35 @@
 DartGap = {};
 
 DartGap.Application = function(messageHandler, messageBuilder) {  
- 	function sendMessage(msg) {
-    	msg.target = "Dart";
-    	console.log("sending message of type [" + msg.type + "] to area [" + msg.area + "]");
-    	window.postMessage(JSON.stringify(msg), "*");
+	function log(msg) {
+		console.log("\nCORDOVA:> " + msg);
+	}
+
+ 	function sendMessage(message) {
+    	message.target = "Dart";
+    	var jsonMessage = JSON.stringify(message);
+    	log("sending message " + jsonMessage);
+    	window.postMessage(JSON.stringify(message), "*");
   	}
 
 	function receiveMessage(event) {
 		var callback, 
         	handler, 
-        	msg = JSON.parse(event.data);
+        	message = JSON.parse(event.data);
 		
-    	if(msg.target === "Cordova") {
-    		console.log("got message of type [" + msg.type + "] for area [" + msg.area + "]");
-      		handler = messageHandler[msg.area];
+    	if(message.target === "Cordova") {
+    		log("got message " + event.data);
+      		handler = messageHandler[message.area];
       		if(handler !== undefined) {
-        		if(msg.callback !== undefined) {
+        		if(message.callback !== undefined) {
           			callback = function(result) {
-            			console.log("callback result from " + msg.type);
-            			console.log(result);
-         				sendMessage(messageBuilder.callback(msg, result)); 
+         				sendMessage(messageBuilder.callback(message, result)); 
           			}
         		}
-        		handler(msg, callback);
+        		handler(message, callback);
+      		} else {
+      			log("unhandled message type " + message.type);
+      			throw "unhandled message type " + message.type;
       		}
     	}
 	} 
@@ -45,17 +51,40 @@ DartGap.Application = function(messageHandler, messageBuilder) {
 DartGap.MessageHandler = function() {
 	var cache = {};
 
-	function errorCB(err) {
-    	alert("Error processing SQL: "+err.code);
-	}
-
   	return {
-		"database": function(msg, callback) {
-		    var executeSql, 
-		    	db = cache[message.content.connectionId],
-		    	queries
+		"database": function(message, callback) {
+		    var db = cache[message.content.connectionId],
+		    	executeSql, 
+		    	queries, 
+		    	queryResult;
+
+		    function getResultCollector(queryNumber) {
+		    	var resultCollector = function(tx, resultSet) {
+		    		var length = resultSet.rows.length;
+		    		var result = {
+		    			"query": queries[queryNumber],
+		    			"result": new Array(length)
+		    		} 
+		    		if(length > 0) {
+		    			for(var i=0; i<length; i++) {
+		    				result["result"][i] = resultSet.rows.item(i)	
+		    			}
+				    } 
+
+				    queryResult[queryNumber] = result;
+				};
+				return resultCollector;
+			};
+
+			function errorCallback(err) {
+    			alert("Error processing SQL: " + err.code);
+			};
+
+			function successCallback() {
+				callback(queryResult);
+			};    
 		    
-		    switch(msg.type) {
+		    switch(message.type) {
 		    	case "changeVersion":
 		    		db.changeVersion(message.content.expectedCurrentVersion, message.content.newVersion);
 		    		callback();
@@ -67,23 +96,27 @@ DartGap.MessageHandler = function() {
 		    	case "executeBatch": 
 					executeSql = function(tx) {
 						queries = message.content["queries"];
-						for(var i=0; i < queries.length; i++) {
-							tx.executeSql(queries[i]); 
+						queryResult = new Array(queries.length);
+						for(var i=0; i < queries.length; i++) {		
+							tx.executeSql(queries[i], [], getResultCollector(i), errorCallback); 
 						}
-					};     
-					db.transaction(execute, errorCB, callback);	
+					}; 
+					db.transaction(executeSql, errorCallback, successCallback);	
 			        break;
 			  	case "executeSql": 
 					executeSql = function(tx) {
-    					tx.executeSql(message.content.sql);
+						queryResult = [null];
+    					tx.executeSql(message.content.sql, [], getResultCollector(0), errorCallback);
 					};     
-					db.transaction(execute, errorCB, callback);	
+					db.transaction(executeSql, errorCallback, successCallback);	
 			        break;
+			    default:
+			    	throw "unhandled database message type " + message.type;
 		    }
 	  	}, 
-	  	"device": function(msg, callback) {
+	  	"device": function(message, callback) {
 		    var db, result;
-		    switch(msg.type) {
+		    switch(message.type) {
 			  	case "info": 
 				    result = {
 			          	"name": device.name,    
@@ -95,17 +128,21 @@ DartGap.MessageHandler = function() {
 			        callback(result);
 			        break;
 				case "openDatabase": 
-					db = window.openDatabase(message.content.name, message.content.version, message.content.displayName, parseInt(message.content.size));
+					db = window.openDatabase(message.content.name, message.content.version, message.content.displayName, message.content.size);
 					cache[message.content.connectionId] = db;
 			        callback();
 			        break;
+			    default:
+			    	throw "unhandled device message type " + message.type;
 		    }
 		}, 
-	  	"notification": function(msg, callback) {
-			switch(msg.type) {
+	  	"notification": function(message, callback) {
+			switch(message.type) {
 				case "alert":
-			    	navigator.notification.alert(msg.content.alert, callback);
+			    	navigator.notification.alert(message.content.alert, callback);
 			    	break;
+			    default:
+			    	throw "unhandled notification message type " + message.type;
 			}
 	  	}
 	};
@@ -114,15 +151,15 @@ DartGap.MessageHandler = function() {
 // Message builder for outgoing messages to Dart
 DartGap.MessageBuilder = function() {
   	return {
-	  	"callback": function(msg, result) {
+	  	"callback": function(message, result) {
 	    	var msg = {
-		  		"area": msg.area + "." + msg.type,
-		  		"callback": msg.callback,
+		  		"area": message.area + "." + message.type,
+		  		"callback": message.callback,
 		  		"type": "callback"
 		 	};
 		 	if(result !== undefined) {
 		   		msg.content = result;
-		 	}
+		 	} 
 		 	return msg; 
 	  	},
 	  	"dartgap": {

@@ -28,14 +28,14 @@ class _DeviceImpl extends _DeviceAware implements Device {
     var connectionId = new _Guid();
     
     var message = createMessage("openDatabase");
-    message.content["connectionId"] = connectionId;
+    message.content["connectionId"] = connectionId.toString();
     message.content["name"] = name;
     message.content["version"] = version;
     message.content["displayName"] = displayName;
     message.content["size"] = size;
     message.callback = (_DeviceMessage msg) {
       if(msg.hasErrors) {
-        completer.completeException(new IllegalArgumentException("failed to open database $name"));
+        completer.completeException("failed to open database $name");
       } else {
         var db = new _DeviceDatabaseImpl(connectionId);
         completer.complete(db);

@@ -65,9 +65,10 @@ class _DeviceMessageRouter {
       // save callback so we can retrieve it later when a reply occures
       var callbackId = new _Guid();
       _callbacks[callbackId] = message.callback;
-      message.callback = callbackId.toString();
+      message.callback = callbackId;
     }
-    _logger.debug("sending message of type [${message.type}] to area [${message.area}] and content ${message.asJsonString}");
-    window.postMessage(message.asJsonString, @"*"); 
+    String jsonMessage = message.asJsonString;
+    _logger.debug("sending message ${jsonMessage}");
+    window.postMessage(jsonMessage, "*"); 
   }
 }

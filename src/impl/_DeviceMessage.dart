@@ -29,20 +29,18 @@ class _DeviceMessage {
     // required keys
     var msg = {
       "area": area,
-      "content": content,
       "type": type,
-      "target": "Cordova"
+      "target": "Cordova",
+      "content": content
     };
     // optional keys
     if(callback !== null) {
-      msg["callback"] = callback;
+      msg["callback"] = callback.toString();
     }
-    var string = JSON.stringify(msg);
-    print("json is $string");
-    return string;
+    return JSON.stringify(msg);
   }
   
-  bool get hasErrors() => error === null;
+  bool get hasErrors() => error !== null;
 }
 
 

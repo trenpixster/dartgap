@@ -15,9 +15,8 @@ class _DeviceDatabaseImpl extends _DeviceAware implements DeviceDatabase {
     var message = _connectionMessage("executeSql");
     message.content["sql"] = sql;
     message.callback = (_DeviceMessage msg) {
-      if(message.hasErrors) {
-        // TODO use correct Exception
-        completer.completeException(new IllegalArgumentException(msg.error));
+      if(msg.hasErrors) {
+        completer.completeException(msg.error);
       } else {
         var result = new _SQLResultImpl(msg);
         completer.complete(result);
@@ -42,9 +41,8 @@ class _DeviceDatabaseImpl extends _DeviceAware implements DeviceDatabase {
     message.content["expectedCurrentVersion"] = expectedCurrentVersion;
     message.content["newVersion"] = newVersion;
     message.callback = (_DeviceMessage msg) {
-      if(message.hasErrors) {
-        // TODO use correct Exception
-        completer.completeException(new IllegalArgumentException(msg.error));
+      if(msg.hasErrors) {
+        completer.completeException(msg.error);
       } else {
         completer.complete(newVersion);
       }
@@ -68,9 +66,8 @@ class _DeviceDatabaseImpl extends _DeviceAware implements DeviceDatabase {
     var message = _connectionMessage("executeBatch");
     message.content["queries"] = queries;
     message.callback = (_DeviceMessage msg) {
-      if(message.hasErrors) {
-        // TODO use correct Exception
-        completer.completeException(new IllegalArgumentException(msg.error));
+      if(msg.hasErrors) {
+        completer.completeException(msg.error);
       } else {
         var result = new _SQLBatchResultImpl(msg);
         completer.complete(result);
@@ -85,7 +82,7 @@ class _DeviceDatabaseImpl extends _DeviceAware implements DeviceDatabase {
   
   _connectionMessage(String type) {
     var message = createMessage(type);
-    message.content["connectionId"] = _connectionId;
+    message.content["connectionId"] = _connectionId.toString();
     return message;
   }
 }

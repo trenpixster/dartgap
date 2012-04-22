@@ -9,5 +9,13 @@
 interface SQLBatchResult {
   List<SQLResult> get results();
   
+  /**
+   * Convinece function to get entry in batch result
+   */
   SQLResult operator[](int index);
+  
+  /**
+   * Convinece function to loop over each entry in the batch result
+   */
+  forEach(f(SQLResult result));
 }
