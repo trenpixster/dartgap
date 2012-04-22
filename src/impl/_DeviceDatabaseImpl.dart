@@ -9,20 +9,13 @@ class _DeviceDatabaseImpl extends _DeviceAware implements DeviceDatabase {
   _DeviceDatabaseImpl(this._connectionId): super("database"); 
   
   Future<SQLResult> executeSql(String sql) {
-    _checkConnection();
-    var completer = new Completer<SQLResultSet>();
+    var completer = new Completer<SQLResult>();
     
-    var message = _connectionMessage("executeSql");
-    message.content["sql"] = sql;
-    message.callback = (_DeviceMessage msg) {
-      if(msg.hasErrors) {
-        completer.completeException(msg.error);
-      } else {
-        var result = new _SQLResultImpl(msg);
-        completer.complete(result);
-      }
-    };
-    sendMessage(message);
+    // single queries are executed as a batch with one query inside
+    SQLBatch batch = batchSql(sql);
+    Future<SQLBatchResult> batchCallback = batch.executeBatch();
+    batchCallback.then((SQLBatchResult result) => completer.complete(result[0]));
+    batchCallback.handleException((Exception e) => completer.completeException(e));
     
     return completer.future;
   }

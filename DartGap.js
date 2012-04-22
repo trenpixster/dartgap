@@ -103,13 +103,6 @@ DartGap.MessageHandler = function() {
 					}; 
 					db.transaction(executeSql, errorCallback, successCallback);	
 			        break;
-			  	case "executeSql": 
-					executeSql = function(tx) {
-						queryResult = [null];
-    					tx.executeSql(message.content.sql, [], getResultCollector(0), errorCallback);
-					};     
-					db.transaction(executeSql, errorCallback, successCallback);	
-			        break;
 			    default:
 			    	throw "unhandled database message type " + message.type;
 		    }

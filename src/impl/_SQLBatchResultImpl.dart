@@ -8,7 +8,7 @@ class _SQLBatchResultImpl implements SQLBatchResult {
   
   _SQLBatchResultImpl(_DeviceMessage message) {
     results = [];
-    message.content.forEach((Map data) {
+    message.content.forEach((var data) {
       results.add(new _SQLResultImpl(data["query"], data["result"]));
     });
   }
